@@ -3,6 +3,8 @@ package com.webapp.lms.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,13 +23,14 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
             .csrf(csrf -> csrf.disable()) // Disable CSRF for API testing
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**").permitAll() // Allow all API requests
-                .anyRequest().authenticated() // Other requests require authentication
+                .requestMatchers("/users/signup", "/users/login").permitAll() // Allow signup & login
+                .anyRequest().authenticated() // Other requests need authentication
             )
             .httpBasic(); // Enables Basic Authentication (optional)
 
         return http.build();
     }
+  
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {  // <-- Add this method
@@ -40,4 +43,13 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+  
+
+    
+
 }
