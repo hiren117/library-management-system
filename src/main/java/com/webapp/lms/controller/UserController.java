@@ -1,6 +1,7 @@
 package com.webapp.lms.controller;
 
 import com.webapp.lms.model.User;
+import com.webapp.lms.security.JwtUtil;
 import com.webapp.lms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,15 +53,19 @@ public class UserController {
 //            return "Invalid username or password!";
 //        }
 //    }
+    @Autowired
+    private JwtUtil jwtUtil;
     
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         boolean isValid = userService.validateUser(loginRequest.getUserName(), loginRequest.getPassword());
 
         if (isValid) {
+        	String token = jwtUtil.generateToken(loginRequest.getUserName());
+        	
         	Map<String, String> response = new HashMap<>();
             response.put("message", "Login successful!");
-            response.put("token", "dummy-jwt-token");
+            response.put("token", token);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "Invalid username or password!"));
