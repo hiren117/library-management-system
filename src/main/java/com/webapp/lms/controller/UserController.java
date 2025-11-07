@@ -1,5 +1,7 @@
 package com.webapp.lms.controller;
 
+import com.webapp.lms.dto.LoginRequest;
+import com.webapp.lms.dto.SignupRequest;
 import com.webapp.lms.model.User;
 import com.webapp.lms.security.JwtUtil;
 import com.webapp.lms.service.UserService;
@@ -28,13 +30,14 @@ public class UserController {
 
     // Sign-up (User Registration)
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> registerUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody SignupRequest signupRequest) {
     	//debugging
-    	System.out.println("Signup request received: " + user);
+    	//System.out.println("Signup request received: " + user);
     	
         Map<String, String> response = new HashMap<>();
         try {
-            userService.registerUser(user);
+            userService.registerUser(signupRequest);
+
             response.put("message", "User registered successfully!");
             return ResponseEntity.ok(response);  // Return JSON response
         } catch (RuntimeException e) {

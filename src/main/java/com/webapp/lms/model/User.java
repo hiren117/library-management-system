@@ -10,7 +10,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true) // Ensure unique usernames
+    @Column(name = "user_name",nullable = false, unique = true) // Ensure unique usernames
     private String userName;
 
     @Column(nullable = false)

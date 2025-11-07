@@ -1,5 +1,6 @@
 package com.webapp.lms.service;
 
+import com.webapp.lms.dto.SignupRequest;
 import com.webapp.lms.model.User;
 
 import com.webapp.lms.repository.UserRepository;
@@ -21,16 +22,24 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder  passwordEncoder;  // Injecting password encoder
 
     @Override
-    public User registerUser(User user) {
+    public User registerUser(SignupRequest signupRequest) {
+        User user = new User();
+        user.setUserName(signupRequest.getUserName());
+        // SIGN UP Encodes Exactly once
+        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        user.setEmailId(signupRequest.getEmailId());
+        user.setFullName(signupRequest.getFullName());
+        user.setMobileNumber(signupRequest.getMobileNumber());
+
         if (userRepository.existsByUserName(user.getUserName())) {
             throw new RuntimeException("Username already exists!");
         }
         if (userRepository.existsByEmailId(user.getEmailId())) {
             throw new RuntimeException("Email ID already registered!");
         }
-
+        System.out.println("🔒 Encoded hash before save: " + user.getPassword());
         // ✅ Hash password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }
@@ -55,7 +64,14 @@ public class UserServiceImpl implements UserService {
 
     public boolean validateUser(String userName, String password) {
         Optional<User> user = userRepository.findByUserName(userName);
+        System.out.println("🟢 Login attempt for: " + userName + "password: " + password);
 
+        System.out.println("🟡 User found? " + user.isPresent());
+
+        if (user.isPresent()) {
+            System.out.println("🟣 Stored hash: " + user.get().getPassword());
+            System.out.println("🔵 Password match: " + passwordEncoder.matches(password, user.get().getPassword()));
+        }
         // Compare the entered password with the hashed password in DB
         return user.isPresent() && passwordEncoder.matches(password, user.get().getPassword());
     }
