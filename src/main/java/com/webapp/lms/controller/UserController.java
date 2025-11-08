@@ -69,6 +69,7 @@ public class UserController {
         	Map<String, String> response = new HashMap<>();
             response.put("message", "Login successful!");
             response.put("token", token);
+            System.out.println("JWT TOKEN :" + token);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "Invalid username or password!"));

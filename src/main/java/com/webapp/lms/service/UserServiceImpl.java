@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             System.out.println("🟣 Stored hash: " + user.get().getPassword());
             System.out.println("🔵 Password match: " + passwordEncoder.matches(password, user.get().getPassword()));
+
         }
         // Compare the entered password with the hashed password in DB
         return user.isPresent() && passwordEncoder.matches(password, user.get().getPassword());
